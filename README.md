@@ -1,4 +1,4 @@
-# Themefisher Template Skills for AI Agents
+# Themefisher and Gethugothemes Template Skills for AI Agents
 
 [![skills.sh](https://skills.sh/b/zeon-studio/template-skills)](https://skills.sh/zeon-studio/template-skills)
 
