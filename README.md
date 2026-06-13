@@ -2,9 +2,9 @@
 
 [![skills.sh](https://skills.sh/b/zeon-studio/template-skills)](https://skills.sh/zeon-studio/template-skills)
 
-A collection of AI Agent Skills designed to help you easily customize and modify **Themefisher** templates using modern AI coding assistants.
+A collection of AI Agent Skills designed to help you easily customize and modify **Themefisher** and **Gethugothemes** templates using modern AI coding assistants.
 
-These skills provide coding agents (like Cursor, Cline, Windsurf, Claude Code, Copilot, etc.) with the exact context and conventions they need to seamlessly work with Themefisher templates without hallucinating.
+These skills provide coding agents (like Cursor, Cline, Windsurf, Claude Code, Copilot, etc.) with the exact context and conventions they need to seamlessly work with Themefisher and Gethugothemes templates without hallucinating.
 
 ## Available Skills
 
@@ -17,6 +17,10 @@ The unified handbook for **Next.js** based Themefisher templates.
 ### `astro-template-guidance`
 
 The unified handbook for **Astro** based Themefisher templates.
+
+### `hugo-template-guidance`
+
+The unified handbook for **Hugo** based Gethugothemes templates.
 
 ---
 
@@ -46,11 +50,17 @@ npx skills add zeon-studio/template-skills --skill nextjs-template-guidance
 npx skills add zeon-studio/template-skills --skill astro-template-guidance
 ```
 
+**For a Hugo Template:**
+
+```bash
+npx skills add zeon-studio/template-skills --skill hugo-template-guidance
+```
+
 > **Note:** The CLI will automatically detect your installed agents (e.g., Cursor, Claude Code, Cline, etc.) and prompt you to install the skill to the agents of your choice.
 
 ## Usage
 
-Once installed, simply start a conversation with your AI agent about your Themefisher project. The agent will automatically recognize when to use the guidance skill to fetch the right documentation.
+Once installed, simply start a conversation with your AI agent about your Themefisher or Gethugothemes project. The agent will automatically recognize when to use the guidance skill to fetch the right documentation.
 
 You can try prompts like:
 
