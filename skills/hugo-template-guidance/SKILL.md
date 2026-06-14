@@ -13,18 +13,19 @@ Handbook for this theme (Hugo Extended + Tailwind v4 + Hugo Modules), assuming t
 
 ## Routing Guide
 
-| Request                                                     | Read                                 |
-| ----------------------------------------------------------- | ------------------------------------ |
-| Detect or convert setup mode (theme-setup vs project-setup) | `references/detect-mode.md`          |
-| Architecture, folder layout, data flow                      | `references/project-architecture.md` |
-| Add a page, route, or homepage section                      | `references/adding-new-pages.md`     |
-| Partials, components, shortcodes, Hugo Modules              | `references/component-usage.md`      |
-| Add, remove, or enable a Hugo Module (`module.toml`)        | `references/hugo-modules.md`         |
-| Markdown content, frontmatter, taxonomies                   | `references/content-management.md`   |
-| Add/configure a new language, multilingual, i18n, translate | `references/i18n-guidance.md`        |
-| Site config, menus, social, feature toggles, SEO            | `references/page-configuration.md`   |
+| Request                                                        | Read                                 |
+| -------------------------------------------------------------- | ------------------------------------ |
+| Detect or convert setup mode (theme-setup vs project-setup)    | `references/detect-mode.md`          |
+| pre-flight checks (Node, Hugo version, package manager)        | `references/preflight-checks.md`     |
+| Architecture, folder layout, data flow                         | `references/project-architecture.md` |
+| Add a page, route, or homepage section                         | `references/adding-new-pages.md`     |
+| Partials, components, shortcodes, Hugo Modules                 | `references/component-usage.md`      |
+| Add, remove, or enable a Hugo Module (`module.toml`)           | `references/hugo-modules.md`         |
+| Markdown content, frontmatter, taxonomies                      | `references/content-management.md`   |
+| Add/configure a new language, multilingual, i18n, translate    | `references/i18n-guidance.md`        |
+| Site config, menus, social, feature toggles, SEO               | `references/page-configuration.md`   |
 | Package manager detection, scripts, generators, module updates | `references/script-usage.md`         |
-| Tailwind v4, dark mode, design tokens (`data/theme.json`)   | `references/styling-and-theming.md`  |
+| Tailwind v4, dark mode, design tokens (`data/theme.json`)      | `references/styling-and-theming.md`  |
 
 ## Steps
 
