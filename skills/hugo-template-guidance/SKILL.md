@@ -7,7 +7,9 @@ description: Use whenever you need to understand how this theme works — adding
 
 Handbook for this theme (Hugo Extended + Tailwind v4 + Hugo Modules), assuming the standard **project-setup** layout (site at root, theme vendored in `themes/<theme>/` — the single folder under `themes/`; see `references/detect-mode.md` to find its name). Progressive disclosure: **read the matching `references/` file before acting.**
 
-> If `exampleSite/hugo.toml` exists, the repo is still in theme-setup — run `pnpm project-setup` first (see `references/detect-mode.md`) before using anything below.
+> If `exampleSite/hugo.toml` exists, the repo is still in theme-setup — run `<pm> project-setup` first (see `references/detect-mode.md`) before using anything below.
+>
+> **Package manager:** `<pm>` is a placeholder for this project's package manager. Detect it from a lock file (`pnpm-lock.yaml`, `package-lock.json`, `yarn.lock`, `bun.lock`/`bun.lockb`) or `package.json`'s `packageManager` field before running any command below — don't assume `pnpm`. Details: `references/script-usage.md`.
 
 ## Routing Guide
 
@@ -21,7 +23,7 @@ Handbook for this theme (Hugo Extended + Tailwind v4 + Hugo Modules), assuming t
 | Markdown content, frontmatter, taxonomies                   | `references/content-management.md`   |
 | Add/configure a new language, multilingual, i18n, translate | `references/i18n-guidance.md`        |
 | Site config, menus, social, feature toggles, SEO            | `references/page-configuration.md`   |
-| pnpm/Node scripts, generators, module updates               | `references/script-usage.md`         |
+| Package manager detection, scripts, generators, module updates | `references/script-usage.md`         |
 | Tailwind v4, dark mode, design tokens (`data/theme.json`)   | `references/styling-and-theming.md`  |
 
 ## Steps
