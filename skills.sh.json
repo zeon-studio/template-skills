@@ -1,0 +1,21 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Next.js",
+      "description": "Skills for Next.js based Themefisher templates.",
+      "skills": ["nextjs-template-guidance"]
+    },
+    {
+      "title": "Astro",
+      "description": "Skills for Astro based Themefisher templates.",
+      "skills": ["astro-template-guidance"]
+    },
+    {
+      "title": "Hugo",
+      "description": "Skills for Hugo based Gethugothemes & Themefisher templates.",
+      "skills": ["hugo-template-guidance"]
+    }
+  ]
+}
