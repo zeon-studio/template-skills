@@ -16,6 +16,11 @@
       "title": "Hugo",
       "description": "Skills for Hugo based Gethugothemes & Themefisher templates.",
       "skills": ["hugo-template-guidance"]
+    },
+    {
+      "title": "Sitepins CMS",
+      "description": "Skill for configuring a repository for the Sitepins git-based headless CMS.",
+      "skills": ["sitepins-cms-setup"]
     }
   ]
 }

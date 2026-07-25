@@ -22,6 +22,10 @@ The unified handbook for **Astro** based Themefisher templates.
 
 The unified handbook for **Hugo** based Gethugothemes templates.
 
+### `sitepins-cms-setup`
+
+Configures a repository for the **Sitepins** git-based headless CMS. It inspects the project and generates the committed `.sitepins/` folder — `config.json` (folder mapping, commit mode, sidebar arrangement), content `schema/*.json` templates, and reusable `snippet/*.json` blocks — so the project is CMS-ready without clicking through the Sitepins web UI.
+
 ---
 
 Both skills provide the agent with a deep understanding of the template's:
@@ -54,6 +58,12 @@ npx skills add zeon-studio/template-skills --skill astro-template-guidance
 
 ```bash
 npx skills add zeon-studio/template-skills --skill hugo-template-guidance
+```
+
+**To set up Sitepins CMS on a repo:**
+
+```bash
+npx skills add zeon-studio/template-skills --skill sitepins-cms-setup
 ```
 
 > **Note:** The CLI will automatically detect your installed agents (e.g., Cursor, Claude Code, Cline, etc.) and prompt you to install the skill to the agents of your choice.
