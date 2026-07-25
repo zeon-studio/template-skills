@@ -51,6 +51,8 @@ A schema is a **content template**: it defines the frontmatter fields, types, an
 | `description` | string | Optional help text shown in the editor. |
 | `isRequired` | boolean | Editor blocks save if empty. |
 | `isIgnored` | boolean | Field parsed but hidden/left untouched by the editor. |
+| `subType` | string | **`Array` fields only** — `"string"` or `"object"`. See below. |
+| `isDropdown` + `reference*` | — | Turns a `string` / `Array`-of-string field into a dropdown. See "Dropdown / reference fields". |
 
 ## Field types (runtime vocabulary — use exactly these)
 
@@ -63,7 +65,7 @@ A schema is a **content template**: it defines the frontmatter fields, types, an
 | `Date` | date picker | `""` | `alwaysUseCurrentDate` (bool) — if `true`, stamps today's date on save |
 | `media` | single media picker | `""` | value is a path under the media folder |
 | `gallery` | multi media picker | `[]` | array of media paths |
-| `Array` | repeatable list | `[]` | add `fields` for a list of objects (repeatable groups) |
+| `Array` | repeatable list | `[]` | `subType` (`"string"` \| `"object"`); plus `fields` when `subType` is `object` |
 | `object` | nested group | — | requires `fields` — nested field array |
 | `color` | color picker | `""` | for hex/color-string values |
 
@@ -71,13 +73,14 @@ A schema is a **content template**: it defines the frontmatter fields, types, an
 
 ### Nested objects and arrays of objects
 
-Use `fields` to nest. An `object` groups fields; an `Array` with `fields` is a repeatable group.
+Use `fields` to nest. An `object` groups fields; an `Array` with `subType: "object"` is a repeatable group.
 
 ```json
 {
   "name": "social",
   "label": "Social",
   "type": "Array",
+  "subType": "object",
   "value": [],
   "fields": [
     { "name": "icon", "label": "Icon", "type": "media", "value": "" },
@@ -86,10 +89,40 @@ Use `fields` to nest. An `object` groups fields; an `Array` with `fields` is a r
 }
 ```
 
-### Dropdown / reference fields (optional advanced)
+### `subType` (Array fields)
 
-A field can present a dropdown whose options are static or pulled from repo content:
+An `Array` field **must** declare what it holds. This drives everything else about it:
 
+| `subType` | Meaning |
+|-----------|---------|
+| `"string"` | List of scalars. Can be turned into a **multi-select dropdown**. |
+| `"object"` | Repeatable group — requires a nested `fields` array. |
+
+`Array` defaults to `subType: "string"` when created. Omitting it on a list of scalars is the usual reason a multi-select won't offer dropdown mode.
+
+### Dropdown / reference fields
+
+A dropdown is a **plain field plus `isDropdown: true`** — it is not its own `type`. Only two shapes support it:
+
+- `type: "string"` → single-select dropdown
+- `type: "Array"` + `subType: "string"` → multi-select dropdown
+
+Options come from one of three sources, set by `referenceType`.
+
+**1. Static options** — a fixed list you supply:
+```json
+{
+  "name": "status",
+  "label": "Status",
+  "type": "string",
+  "value": "",
+  "isDropdown": true,
+  "referenceType": "static",
+  "options": ["draft", "review", "published"]
+}
+```
+
+**2. Files from a folder** — one option per file (e.g. pick an author):
 ```json
 {
   "name": "author",
@@ -105,14 +138,31 @@ A field can present a dropdown whose options are static or pulled from repo cont
 }
 ```
 
+**3. Data from a file** — options read from a key inside a JSON/YAML/TOML file. Combine with `Array` for multi-select:
+```json
+{
+  "name": "categories",
+  "label": "Categories",
+  "type": "Array",
+  "subType": "string",
+  "value": [],
+  "isDropdown": true,
+  "referenceType": "file",
+  "referencePath": "src/config/taxonomy.json",
+  "referenceField": "categories"
+}
+```
+
 | Property | Meaning |
 |----------|---------|
-| `isDropdown` | Enables dropdown mode. |
-| `options` | `string[]` of static choices (when `referenceType` is `static`). |
+| `isDropdown` | Enables dropdown mode. Required. |
 | `referenceType` | `static` \| `folder` \| `file` — where options come from. |
-| `referencePath` | Folder/file to read options from. |
-| `referenceInclude` / `referenceExclude` | Glob filters for reference files. |
-| `referenceField` | Which frontmatter field of each referenced file becomes the option label. |
+| `options` | `string[]` of choices. **`static` only.** |
+| `referencePath` | The folder (`folder`) or the data file (`file`) to read. Not used by `static`. |
+| `referenceInclude` / `referenceExclude` | Glob filters. **`folder` only.** |
+| `referenceField` | Dual purpose — for `folder`, the frontmatter key shown as each option's label (omit/empty ⇒ use the filename; `slug` is also available). For `file`, the key to extract from the data file (omit/empty ⇒ use the whole file/array). |
+
+Only emit the keys the chosen `referenceType` actually uses; stray `options` or glob keys on a folder/file source are ignored but make the schema misleading.
 
 ## How to author a schema (do this per content folder)
 
@@ -123,7 +173,7 @@ A field can present a dropdown whose options are static or pulled from repo cont
    - number → `number`; boolean → `boolean`
    - date-looking value → `Date`
    - image/media path → `media`; array of media → `gallery`
-   - array of scalars → `Array` (no `fields`); array of objects → `Array` + `fields`
+   - array of scalars → `Array` + `subType: "string"`; array of objects → `Array` + `subType: "object"` + `fields`
    - nested map → `object` + `fields`
    - hex color → `color`
 4. Preserve the field **order** from the source file.
