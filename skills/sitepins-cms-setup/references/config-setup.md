@@ -38,6 +38,7 @@ Detect the framework from config files at repo root, then apply its path convent
 
 | Framework | Detected by (any of) | `content` | `media` | `public` | `configs` |
 |-----------|----------------------|-----------|---------|----------|-----------|
+| **TanStack Start** | a bundler config (`vite.config.*` / `rsbuild.config.*` / `app.config.*`) **plus** routing evidence ‡ | `src/content` | `public/images` | `public` | `src/config` |
 | **Astro** | `astro.config.mjs` / `.js` / `.ts` | `src/content` | `public/images` | `public` | `src/config` |
 | **Next.js** | `next.config.js` / `.mjs` / `.ts` | `src/content` | `public/images` | `public` | `src/config` |
 | **Hugo** | `config.toml` / `config.yaml` / `config.yml` / `hugo.toml` / `hugo.yaml` / `hugo.json` | `content/<lang>` e.g. `content/english` † | `assets/images` | `static` | `config/_default`, `hugo.toml`, `data`, `i18n` |
@@ -45,9 +46,27 @@ Detect the framework from config files at repo root, then apply its path convent
 
 † Read the actual language dir from `config/_default/languages.toml` (`contentDir`). See **Hugo specifics** below — this choice changes how schemas must be named.
 
+‡ A bundler config alone is **not** enough — see **TanStack Start specifics** below.
+
 These are **suggestions, not guarantees**. Always confirm the folders actually exist in the repo before writing them. If a project deviates (e.g. Eleventy, Jekyll, Nuxt), inspect the tree and pick the real content/media directories — Sitepins is SSG-agnostic and only cares about correct paths.
 
 **Prefer the repo's own guidance skill.** Themefisher/Gethugothemes templates ship `.agents/skills/<framework>-template-guidance/` — read its `content-management.md` / `page-configuration.md` for this template's exact content, media, and config paths rather than relying on the table.
+
+### TanStack Start specifics
+
+TanStack Start is a Vite/Rsbuild app, so **its bundler config is not exclusive** — `vite.config.ts` alone matches thousands of non-TanStack projects. Detection therefore needs a config file **and** routing evidence:
+
+1. **A bundler config** — `vite.config.ts` / `.js` / `.mjs` / `.mts`, `rsbuild.config.ts` / `.js` / `.mjs`, or the legacy `app.config.ts` / `.js` / `.mjs`
+2. **Plus at least one routing artefact** — `routeTree.gen.ts` (at root, `src/`, or `app/`) or a root route file `routes/__root.tsx` / `.jsx` / `.ts` (under `src/`, `app/`, or the repo root)
+
+Both are required. A plain Vite app (`vite.config.ts` + `src/main.tsx`) is **not** TanStack, and a stray `__root.tsx` with no bundler config isn't either.
+
+Two more rules worth knowing:
+
+- **Monorepos are supported.** Detection matches nested paths, so `apps/web/vite.config.ts` + `apps/web/src/routes/__root.tsx` resolves correctly. Set your Sitepins paths relative to the **repo root** (e.g. `apps/web/src/content`), not the package.
+- **`package.json` is the tiebreaker.** Because the config file is shared, a `@tanstack/react-start`, `@tanstack/solid-start`, or `@tanstack/start` dependency confirms the match. If you're unsure whether a Vite repo is TanStack Start, check `package.json` first — it's the most reliable signal.
+
+Path conventions match Astro/Next.js: `src/content`, `public/images`, `public`, `src/config`. Unlike Astro, TanStack Start has **no built-in content layer**, so confirm a content loader actually exists before configuring — see `references/cms-readiness.md`.
 
 ### Hugo specifics
 

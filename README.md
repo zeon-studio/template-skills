@@ -22,6 +22,10 @@ The unified handbook for **Astro** based Themefisher templates.
 
 The unified handbook for **Hugo** based Gethugothemes templates.
 
+### `tanstack-template-guidance`
+
+The unified handbook for **TanStack Start** based Themefisher templates. Covers file-based routing, route loaders and server functions, and the fact that TanStack Start has no built-in content layer.
+
 ### `sitepins-cms-setup`
 
 Configures a repository for the **Sitepins** git-based headless CMS. It inspects the project and generates the committed `.sitepins/` folder — `config.json` (folder mapping, commit mode, sidebar arrangement), content `schema/*.json` templates, and reusable `snippet/*.json` blocks — so the project is CMS-ready without clicking through the Sitepins web UI.
@@ -58,6 +62,12 @@ npx skills add zeon-studio/template-skills --skill astro-template-guidance
 
 ```bash
 npx skills add zeon-studio/template-skills --skill hugo-template-guidance
+```
+
+**For a TanStack Start Template:**
+
+```bash
+npx skills add zeon-studio/template-skills --skill tanstack-template-guidance
 ```
 
 **To set up Sitepins CMS on a repo:**

@@ -18,6 +18,11 @@
       "skills": ["hugo-template-guidance"]
     },
     {
+      "title": "TanStack Start",
+      "description": "Skills for TanStack Start based Themefisher templates.",
+      "skills": ["tanstack-template-guidance"]
+    },
+    {
       "title": "Sitepins CMS",
       "description": "Skill for configuring a repository for the Sitepins git-based headless CMS.",
       "skills": ["sitepins-cms-setup"]

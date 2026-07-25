@@ -8,7 +8,7 @@ Sitepins manages **content files** (frontmatter Markdown/MDX/JSON/YAML/TOML) in 
 
 **All editable content MUST live in the content folder as frontmatter files** — homepage sections, static pages, blog posts, authors, reusable sections (CTA/testimonials/features/FAQ), and any copy an editor would change. If it's inlined in components/config/`data`, it's **not ready**.
 
-**But the *how* differs per framework.** Astro, Next.js, and Hugo store, load, and validate content differently — do not apply one structure to all three.
+**But the *how* differs per framework.** Astro, Next.js, TanStack Start, and Hugo store, load, and validate content differently — do not apply one structure to all of them.
 
 ## Use the project's own template-guidance skill (authoritative)
 
@@ -21,20 +21,20 @@ Themefisher/Gethugothemes templates ship an installed guidance skill inside the 
   page-configuration.md      ← config files (site config, menu, params)
 ```
 
-`<framework>` is one of `astro`, `nextjs`, `hugo`. **Read that repo's `content-management.md` and `project-architecture.md` first** — they are the source of truth for *this* template's content layout, loader wiring, and required frontmatter. This Sitepins skill and those guidance skills come from the same `template-skills` repo, so they agree by design.
+`<framework>` is one of `astro`, `nextjs`, `tanstack`, `hugo`. **Read that repo's `content-management.md` and `project-architecture.md` first** — they are the source of truth for *this* template's content layout, loader wiring, and required frontmatter. This Sitepins skill and those guidance skills come from the same `template-skills` repo, so they agree by design.
 
 ### Install the guidance skill if it's missing
 
 Do not assume it's present — check first, install if not:
 
-1. **Detect the framework** (`astro.config.*` → astro, `next.config.*` → nextjs, `config.toml`/`hugo.*` → hugo).
+1. **Detect the framework** (`astro.config.*` → astro, `next.config.*` → nextjs, `config.toml`/`hugo.*` → hugo, a bundler config **plus** `routeTree.gen.ts`/`routes/__root.tsx` → tanstack).
 2. **Check for the skill** at `.agents/skills/<framework>-template-guidance/`.
 3. **If missing, install it** from the `template-skills` repo, then read it:
    ```bash
-   npx skills add zeon-studio/template-skills --skill astro-template-guidance   # or nextjs-/hugo-template-guidance
+   npx skills add zeon-studio/template-skills --skill astro-template-guidance   # or nextjs-/tanstack-/hugo-template-guidance
    ```
    Pick the one matching the detected framework. (This is the same command used to install this Sitepins skill.)
-4. **Only fall back** to reading raw sources if install isn't possible: Astro → `src/content.config.ts`; Next.js → the content parser (`src/lib/contentParser.ts` or similar); Hugo → `config/_default/languages.toml` for `contentDir`.
+4. **Only fall back** to reading raw sources if install isn't possible: Astro → `src/content.config.ts`; Next.js → the content parser (`src/lib/contentParser.ts` or similar); TanStack Start → `content-collections.ts` or the loader that reads markdown; Hugo → `config/_default/languages.toml` for `contentDir`.
 
 ## Readiness audit
 
@@ -49,17 +49,17 @@ Do not assume it's present — check first, install if not:
 
 ## Per-framework readiness
 
-| | **Astro** (`astroplate`) | **Next.js** (`nextplate`) | **Hugo** (`hugoplate`) |
-|---|---|---|---|
-| Content dir | `src/content/` | `src/content/` | language `contentDir`, e.g. `content/english/` (or `exampleSite/content/english/` for theme repos) |
-| Media dir | `public/images/` | `public/images/` | `assets/images/` |
-| Media public base | `public` | `public` | `static` (or `exampleSite/static`) |
-| Loader | Astro Content Collections; **Zod schema in `src/content.config.ts`** (build fails on mismatch) | Custom parsers (`gray-matter`), e.g. `src/lib/contentParser.ts` — dir is hardcoded | Hugo content/layout pairing; templates read frontmatter directly |
-| Index/landing file | `-index.md` / `index.md` per template convention | same | `_index.md` = branch bundle (section landing); `page/index.md` = leaf bundle |
-| Config files | `src/config/*.json` | `src/config/*.json` | `config/_default/*.toml`, `hugo.toml`, `data/`, `i18n/` |
-| Key gotchas | Frontmatter must satisfy `content.config.ts` Zod. Don't guess keys — read it. | Keys must match parser exactly (`categories` not `category`). Content only parsed from `src/content/`. | **Multilingual**: content is under a language dir — read `languages.toml` before assuming paths. Section files (`sections/*.md`) need `build.render: "never"`. Author `author` must match an author `title`. Images via image module partial, not raw `<img>`. |
+| | **Astro** (`astroplate`) | **Next.js** (`nextplate`) | **TanStack Start** | **Hugo** (`hugoplate`) |
+|---|---|---|---|---|
+| Content dir | `src/content/` | `src/content/` | `src/content/` | language `contentDir`, e.g. `content/english/` (or `exampleSite/content/english/` for theme repos) |
+| Media dir | `public/images/` | `public/images/` | `public/images/` | `assets/images/` |
+| Media public base | `public` | `public` | `public` | `static` (or `exampleSite/static`) |
+| Loader | Astro Content Collections; **Zod schema in `src/content.config.ts`** (build fails on mismatch) | Custom parsers (`gray-matter`), e.g. `src/lib/contentParser.ts` — dir is hardcoded | **No built-in content layer.** Either `content-collections` (build-time, configured in `content-collections.ts`) or a hand-rolled `gray-matter` loader / `createServerFn` | Hugo content/layout pairing; templates read frontmatter directly |
+| Index/landing file | `-index.md` / `index.md` per template convention | same | same | `_index.md` = branch bundle (section landing); `page/index.md` = leaf bundle |
+| Config files | `src/config/*.json` | `src/config/*.json` | `src/config/*.json` | `config/_default/*.toml`, `hugo.toml`, `data/`, `i18n/` |
+| Key gotchas | Frontmatter must satisfy `content.config.ts` Zod. Don't guess keys — read it. | Keys must match parser exactly (`categories` not `category`). Content only parsed from `src/content/`. | Content dir is **whatever the loader points at** — read `content-collections.ts` (or the loader) rather than assuming `src/content/`. Routes live in `src/routes/`; don't confuse route files with content. | **Multilingual**: content is under a language dir — read `languages.toml` before assuming paths. Section files (`sections/*.md`) need `build.render: "never"`. Author `author` must match an author `title`. Images via image module partial, not raw `<img>`. |
 
-> **Astro & Next.js** share `src/content/` + `public/images`, but Astro adds strict Zod validation — schema-derived `.sitepins` fields must match `content.config.ts`. **Hugo** is different across the board: language-nested content, `assets/images`, `static` public base, and `_index.md` bundles.
+> **Astro, Next.js and TanStack Start** share `src/content/` + `public/images`. Astro adds strict Zod validation; TanStack Start adds nothing at all — the content directory is a convention of whichever loader the template chose, so verify it. **Hugo** differs across the board: language-nested content, `assets/images`, `static` public base, and `_index.md` bundles.
 
 ## Target content structure (Astro / Next.js)
 

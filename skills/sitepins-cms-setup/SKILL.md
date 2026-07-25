@@ -1,6 +1,6 @@
 ---
 name: sitepins-cms-setup
-description: Use this skill to configure a project (repository) for the Sitepins git-based headless CMS by generating the `.sitepins/` folder — `config.json`, content `schema/*.json`, reusable `snippet/*.json`, and sidebar `arrangement`. Use it whenever the user asks to "set up Sitepins", "add Sitepins to this repo", "create Sitepins schemas/snippets/config", "configure the CMS", "generate .sitepins", or wants any Sitepins settings/schema/snippet file authored for a static-site project (Astro, Next.js, Hugo, Eleventy, Jekyll, etc.).
+description: Use this skill to configure a project (repository) for the Sitepins git-based headless CMS by generating the `.sitepins/` folder — `config.json`, content `schema/*.json`, reusable `snippet/*.json`, and sidebar `arrangement`. Use it whenever the user asks to "set up Sitepins", "add Sitepins to this repo", "create Sitepins schemas/snippets/config", "configure the CMS", "generate .sitepins", or wants any Sitepins settings/schema/snippet file authored for a static-site project (Astro, Next.js, TanStack Start, Hugo, Eleventy, Jekyll, etc.).
 ---
 
 # Sitepins CMS Setup
@@ -19,7 +19,7 @@ Normally a user clicks through the Sitepins web UI to produce these files. **Thi
 ## Golden rules
 
 1. **Everything is committed JSON inside `.sitepins/`.** Never invent a different location. Constants are fixed: schema folder = `.sitepins/schema`, snippet folder = `.sitepins/snippet`, config = `.sitepins/config.json`.
-2. **Ready before you configure, per framework.** Content must live in the content folder as frontmatter files — Sitepins cannot manage content hardcoded in components/config/`src/data`. Astro/Next.js/Hugo differ (paths, loaders, validation); defer to the repo's `<framework>-template-guidance` skill and audit/convert first (`references/cms-readiness.md`).
+2. **Ready before you configure, per framework.** Content must live in the content folder as frontmatter files — Sitepins cannot manage content hardcoded in components/config/`src/data`. Astro/Next.js/TanStack Start/Hugo differ (paths, loaders, validation); defer to the repo's `<framework>-template-guidance` skill and audit/convert first (`references/cms-readiness.md`).
 3. **Inspect before you author.** Read the real repo — detect the framework, list content folders, open a representative content file per folder — and derive schemas from actual frontmatter. Do not hardcode fields from memory.
 4. **Paths in `config.json` are repo-root-relative, no leading slash.**
 5. **Use the real runtime field-type vocabulary** (`string`, `number`, `boolean`, `Date`, `media`, `gallery`, `Array`, `object`, plus auto-detected `color`) — not loose names like `text`/`textarea`/`datetime`/`select`. Long-form text (`description`, `content`) is **`string`**, not `textarea`. See `references/schema-authoring.md`.
@@ -28,8 +28,8 @@ Normally a user clicks through the Sitepins web UI to produce these files. **Thi
 
 ## Workflow
 
-1. **Detect the framework** — `astro.config.*` → astro, `next.config.*` → nextjs, `config.toml`/`hugo.*` → hugo (`exampleSite/` present → `hugo_examplesite`).
-2. **Load the template's guidance skill** — Astro, Next.js, and Hugo store and load content differently, so the repo's own `.agents/skills/<framework>-template-guidance/` is the authoritative content model. **If it isn't installed, install it first:** `npx skills add zeon-studio/template-skills --skill <framework>-template-guidance`.
+1. **Detect the framework** — `astro.config.*` → astro, `next.config.*` → nextjs, `config.toml`/`hugo.*` → hugo (`exampleSite/` present → `hugo_examplesite`), a bundler config (`vite.config.*`/`rsbuild.config.*`/`app.config.*`) **plus** routing evidence (`routeTree.gen.ts` or `routes/__root.tsx`) → tanstack.
+2. **Load the template's guidance skill** — Astro, Next.js, TanStack Start, and Hugo store and load content differently, so the repo's own `.agents/skills/<framework>-template-guidance/` is the authoritative content model. **If it isn't installed, install it first:** `npx skills add zeon-studio/template-skills --skill <framework>-template-guidance`.
 3. **Check CMS readiness** — Sitepins can only manage content that lives in the content folder as frontmatter files. If the template hardcodes content in components/config/`src/data`, it is **not ready**: convert it to a content-folder-driven structure before configuring anything. → `references/cms-readiness.md`
 4. **Map folders → `config.json`** using framework conventions. → `references/config-setup.md`
 5. **Author schemas — for collection folders only.** Skip singletons like `homepage/`, `about/`, `contact/` (a lone `-index.md`/`_index.md` is the tell). For each remaining collection, open one existing file, read its frontmatter, and write the schema under the name given by the resolution rule (content folder path minus `config.content`). → `references/schema-authoring.md`
