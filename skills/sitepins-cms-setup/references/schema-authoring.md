@@ -1,6 +1,8 @@
 # Schema Authoring — `.sitepins/schema/*.json`
 
-A schema is a **content template**: it defines the frontmatter fields, types, and defaults for a content folder. When an editor creates a new file in a folder that has a schema, Sitepins pre-fills that file with the template's fields. One JSON file per content type, stored in `.sitepins/schema/`.
+A schema is a **content template**: it defines the frontmatter fields, types, and defaults used when an editor creates a **new** file in a folder. Sitepins pre-fills the new file with the template's fields. One JSON file per collection, stored in `.sitepins/schema/`.
+
+Because schemas only drive *file creation*, they belong on folders that grow — not on one-off pages. See "Which folders actually need a schema" before writing any.
 
 ## Schema file shape
 
@@ -58,8 +60,7 @@ A schema is a **content template**: it defines the frontmatter fields, types, an
 
 | `type` | Editor control | `value` default | Extra properties |
 |--------|----------------|-----------------|------------------|
-| `string` | single-line text | `""` | — |
-| `textarea` | multi-line text | `""` | auto-assigned for `content`/`description`-style long text |
+| `string` | text input | `""` | Use for **all** text, including long-form `description`/`content` |
 | `number` | numeric input | `0` | — |
 | `boolean` | toggle | `false` | — |
 | `Date` | date picker | `""` | `alwaysUseCurrentDate` (bool) — if `true`, stamps today's date on save |
@@ -69,7 +70,11 @@ A schema is a **content template**: it defines the frontmatter fields, types, an
 | `object` | nested group | — | requires `fields` — nested field array |
 | `color` | color picker | `""` | for hex/color-string values |
 
-> Note: capitalization is significant — it is `Date` and `Array` (capital), but `string`/`number`/`boolean`/`object` lowercase. Do not substitute doc-friendly aliases (`text`, `datetime`, `select`, `list`) in the JSON.
+The first eight are exactly what the schema editor's type menu offers. `color` is the one extra type — it is **auto-detected** when a value looks like a color (e.g. `#ff0000`), not chosen from the menu.
+
+> **Capitalization is significant** — `Date` and `Array` are capitalised; `string`/`number`/`boolean`/`object`/`media`/`gallery`/`color` are lowercase.
+>
+> **There is no `textarea` type.** Long-form fields such as `description` and `content` are plain `string`. Nor is there `text`, `datetime`, `select`, or `list` — do not invent aliases.
 
 ### Nested objects and arrays of objects
 
@@ -164,12 +169,41 @@ Options come from one of three sources, set by `referenceType`.
 
 Only emit the keys the chosen `referenceType` actually uses; stray `options` or glob keys on a folder/file source are ignored but make the schema misleading.
 
-## How to author a schema (do this per content folder)
+## Which folders actually need a schema
 
-1. List the content folders under `config.content` (e.g. `blog/`, `authors/`, `products/`).
+**A schema is a template for creating _new_ files. Folders that never gain new files don't need one.** Authoring schemas for them is noise — it clutters Schema Management and implies a "create new" workflow that doesn't exist.
+
+Apply this test to each content folder:
+
+| Folder looks like | Kind | Schema? |
+|---|---|---|
+| Many sibling content files that grow over time — `blog/`, `authors/`, `products/`, `pages/`, `docs/` | **Collection** | ✅ Yes |
+| A single landing file only (`-index.md` / `_index.md` / `index.md`) — `homepage/`, `about/`, `contact/` | **Singleton** | ❌ No |
+| A fixed set of files tied to specific layouts — `sections/` (CTA, testimonial) | **Fixed set** | ⚠️ Only if editors genuinely add new ones |
+
+The quick heuristic: **would an editor ever click "add new file" here?** If no, skip the schema — they'll just open the existing file and edit it in place.
+
+Worked example (a typical Astro/Next template):
+
+```
+src/content/
+  homepage/-index.md          → singleton, no schema
+  about/-index.md             → singleton, no schema
+  contact/-index.md           → singleton, no schema
+  sections/call-to-action.md  → fixed set, usually no schema
+  blog/post-1.md …            → collection  ✅ schema/blog.json
+  authors/john-doe.md …       → collection  ✅ schema/authors.json
+  pages/privacy-policy.md …   → collection  ✅ schema/pages.json
+```
+
+Section landing files (`-index.md` inside a collection) are themselves singletons — they don't change the fact that the folder around them is a collection.
+
+## How to author a schema (do this per collection folder)
+
+1. List the content folders under `config.content`, then **keep only the collections** per the test above (e.g. `blog/`, `authors/`, `pages/`).
 2. For each, **open one representative existing file** and read its frontmatter.
 3. Map each frontmatter key to a field:
-   - string → `string` (long prose / `description` / `content` → `textarea`)
+   - any text, short or long (including `description` / `content`) → `string`
    - number → `number`; boolean → `boolean`
    - date-looking value → `Date`
    - image/media path → `media`; array of media → `gallery`
@@ -179,7 +213,7 @@ Only emit the keys the chosen `referenceType` actually uses; stray `options` or 
 4. Preserve the field **order** from the source file.
 5. Set `isRequired: true` on essentials (`title`, `date`).
 6. Set `fileType`/`fmType` from the source file; set `file` to that source path; set `name` to the folder.
-7. Write `.sitepins/schema/<folder>.json`.
+7. Write the schema using the filename from the resolution rule below.
 
 ## Schema resolution (naming rule — get this right)
 
@@ -229,7 +263,7 @@ Always compute `schemaName` from the real `config.content` you wrote before choo
   "template": [
     { "name": "title", "label": "Title", "type": "string", "value": "", "isRequired": true },
     { "name": "date", "label": "Date", "type": "Date", "value": "", "alwaysUseCurrentDate": false },
-    { "name": "description", "label": "Description", "type": "textarea", "value": "" },
+    { "name": "description", "label": "Description", "type": "string", "value": "" },
     { "name": "price", "label": "Price", "type": "number", "value": 0 },
     { "name": "image", "label": "Image", "type": "media", "value": "" },
     { "name": "categories", "label": "Categories", "type": "Array", "value": [] },
